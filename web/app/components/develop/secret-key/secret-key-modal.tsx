@@ -143,7 +143,7 @@ const SecretKeyModal = ({
         )
       }
       <div className='flex'>
-        <Button variant='default' className={`flex flex-shrink-0 mt-4 ${s.autoWidth}`} onClick={onCreate} disabled={ !currentWorkspace || !isCurrentWorkspaceManager}>
+        <Button className={`flex flex-shrink-0 mt-4 ${s.autoWidth}`} onClick={onCreate} disabled={ !currentWorkspace || !isCurrentWorkspaceManager}>
           <PlusIcon className='flex flex-shrink-0 w-4 h-4' />
           <div className='text-xs font-medium text-gray-800'>{t('appApi.apiKeyModal.createNewSecretKey')}</div>
         </Button>
@@ -154,10 +154,6 @@ const SecretKeyModal = ({
           title={`${t('appApi.actionMsg.deleteConfirmTitle')}`}
           content={`${t('appApi.actionMsg.deleteConfirmTips')}`}
           isShow={showConfirmDelete}
-          onClose={() => {
-            setDelKeyId('')
-            setShowConfirmDelete(false)
-          }}
           onConfirm={onDel}
           onCancel={() => {
             setDelKeyId('')

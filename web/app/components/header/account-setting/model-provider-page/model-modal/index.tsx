@@ -48,7 +48,7 @@ import {
   PortalToFollowElemContent,
 } from '@/app/components/base/portal-to-follow-elem'
 import { useToastContext } from '@/app/components/base/toast'
-import ConfirmCommon from '@/app/components/base/confirm/common'
+import Confirm from '@/app/components/base/confirm'
 import { useAppContext } from '@/context/app-context'
 
 type ModelModalProps = {
@@ -326,7 +326,8 @@ const ModelModal: FC<ModelModalProps> = ({
                   {
                     isEditMode && (
                       <Button
-                        className='mr-2 h-9 text-sm font-medium text-[#D92D20]'
+                        size='large'
+                        className='mr-2 text-[#D92D20]'
                         onClick={() => setShowConfirm(true)}
                       >
                         {t('common.operation.remove')}
@@ -334,13 +335,14 @@ const ModelModal: FC<ModelModalProps> = ({
                     )
                   }
                   <Button
-                    className='mr-2 h-9 text-sm font-medium text-gray-700'
+                    size='large'
+                    className='mr-2'
                     onClick={onCancel}
                   >
                     {t('common.operation.cancel')}
                   </Button>
                   <Button
-                    className='h-9 text-sm font-medium'
+                    size='large'
                     variant='primary'
                     onClick={handleSave}
                     disabled={
@@ -383,12 +385,11 @@ const ModelModal: FC<ModelModalProps> = ({
           </div>
           {
             showConfirm && (
-              <ConfirmCommon
+              <Confirm
                 title={t('common.modelProvider.confirmDelete')}
                 isShow={showConfirm}
                 onCancel={() => setShowConfirm(false)}
                 onConfirm={handleRemove}
-                confirmWrapperClassName='z-[70]'
               />
             )
           }

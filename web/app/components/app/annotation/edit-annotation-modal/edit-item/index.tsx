@@ -3,8 +3,8 @@ import type { FC } from 'react'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import Textarea from 'rc-textarea'
-import cn from 'classnames'
 import { RiDeleteBinLine } from '@remixicon/react'
+import cn from '@/utils/classnames'
 import { Robot, User } from '@/app/components/base/icons/src/public/avatar'
 import { Edit04 } from '@/app/components/base/icons/src/vender/line/general'
 import { Edit04 as EditSolid } from '@/app/components/base/icons/src/vender/solid/general'
@@ -120,8 +120,8 @@ const EditItem: FC<Props> = ({
                 autoFocus
               />
               <div className='mt-2 flex space-x-2'>
-                <Button className='!h-7 !text-xs !font-medium' variant='primary' onClick={handleSave}>{t('common.operation.save')}</Button>
-                <Button className='!h-7 !text-xs !font-medium' onClick={handleCancel}>{t('common.operation.cancel')}</Button>
+                <Button size='small' variant='primary' onClick={handleSave}>{t('common.operation.save')}</Button>
+                <Button size='small' onClick={handleCancel}>{t('common.operation.cancel')}</Button>
               </div>
             </div>
           )}

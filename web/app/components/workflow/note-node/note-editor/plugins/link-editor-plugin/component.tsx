@@ -13,7 +13,6 @@ import {
 } from '@floating-ui/react'
 import { useTranslation } from 'react-i18next'
 import { useClickAway } from 'ahooks'
-import cn from 'classnames'
 import {
   RiEditLine,
   RiExternalLinkLine,
@@ -21,6 +20,7 @@ import {
 } from '@remixicon/react'
 import { useStore } from '../../store'
 import { useLink } from './hooks'
+import cn from '@/utils/classnames'
 import Button from '@/app/components/base/button'
 
 type LinkEditorComponentProps = {
@@ -88,10 +88,7 @@ const LinkEditorComponent = ({
                     />
                     <Button
                       variant='primary'
-                      className={cn(
-                        'py-0 px-2 h-6 text-xs',
-                        !url && 'cursor-not-allowed',
-                      )}
+                      size='small'
                       disabled={!url}
                       onClick={() => handleSaveLink(url)}
                     >

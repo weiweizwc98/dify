@@ -2,13 +2,13 @@
 import type { FC } from 'react'
 import React, { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
-import cn from 'classnames'
 import {
   RiCloseLine,
   RiLoader2Line,
 } from '@remixicon/react'
 import type { Props as FormProps } from './form'
 import Form from './form'
+import cn from '@/utils/classnames'
 import Button from '@/app/components/base/button'
 import { StopCircle } from '@/app/components/base/icons/src/vender/solid/mediaAndDevices'
 import Split from '@/app/components/workflow/nodes/_base/components/split'
@@ -144,7 +144,7 @@ const BeforeRunForm: FC<BeforeRunFormProps> = ({
                 <StopCircle className='w-4 h-4 text-gray-500' />
               </div>
             )}
-            <Button disabled={!isFileLoaded || isRunning} variant='primary' className='w-0 grow !h-8 flex items-center space-x-2 text-[13px]' onClick={handleRun}>
+            <Button disabled={!isFileLoaded || isRunning} variant='primary' className='w-0 grow space-x-2' onClick={handleRun}>
               {isRunning && <RiLoader2Line className='animate-spin w-4 h-4 text-white' />}
               <div>{t(`${i18nPrefix}.${isRunning ? 'running' : 'startRun'}`)}</div>
             </Button>

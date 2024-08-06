@@ -1,9 +1,9 @@
 'use client'
 
 import { useTranslation } from 'react-i18next'
-import cn from 'classnames'
 import { RiCloseLine } from '@remixicon/react'
 import s from './style.module.css'
+import cn from '@/utils/classnames'
 import Button from '@/app/components/base/button'
 import Modal from '@/app/components/base/modal'
 import { AlertTriangle } from '@/app/components/base/icons/src/vender/solid/alertsAndFeedback'
@@ -35,8 +35,8 @@ const ConfirmModal = ({ show, onConfirm, onClose }: ConfirmModalProps) => {
       </div>
       <div className='pt-6 flex justify-end items-center'>
         <div className='flex items-center'>
-          <Button className='mr-2 text-gray-700 text-sm font-medium' onClick={onClose}>{t('common.operation.cancel')}</Button>
-          <Button className='text-sm font-medium border-red-700 border-[0.5px]' variant="warning" onClick={onConfirm}>{t('common.operation.confirm')}</Button>
+          <Button className='mr-2' onClick={onClose}>{t('common.operation.cancel')}</Button>
+          <Button className='border-red-700' variant="warning" onClick={onConfirm}>{t('common.operation.confirm')}</Button>
         </div>
       </div>
     </Modal>

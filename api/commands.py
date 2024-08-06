@@ -8,10 +8,12 @@ import click
 from flask import current_app
 from werkzeug.exceptions import NotFound
 
+from configs import dify_config
 from constants.languages import languages
 from core.rag.datasource.vdb.vector_factory import Vector
 from core.rag.datasource.vdb.vector_type import VectorType
 from core.rag.models.document import Document
+from events.app_event import app_was_created
 from extensions.ext_database import db
 from extensions.ext_redis import redis_client
 from libs.helper import email as email_validate
@@ -111,7 +113,7 @@ def reset_encrypt_key_pair():
     After the reset, all LLM credentials will become invalid, requiring re-entry.
     Only support SELF_HOSTED mode.
     """
-    if current_app.config['EDITION'] != 'SELF_HOSTED':
+    if dify_config.EDITION != 'SELF_HOSTED':
         click.echo(click.style('Sorry, only support SELF_HOSTED mode.', fg='red'))
         return
 
@@ -247,8 +249,7 @@ def migrate_knowledge_vector_database():
     create_count = 0
     skipped_count = 0
     total_count = 0
-    config = current_app.config
-    vector_type = config.get('VECTOR_STORE')
+    vector_type = dify_config.VECTOR_STORE
     page = 1
     while True:
         try:
@@ -332,6 +333,14 @@ def migrate_knowledge_vector_database():
                     collection_name = Dataset.gen_collection_name_by_id(dataset_id)
                     index_struct_dict = {
                         "type": VectorType.OPENSEARCH,
+                        "vector_store": {"class_prefix": collection_name}
+                    }
+                    dataset.index_struct = json.dumps(index_struct_dict)
+                elif vector_type == VectorType.ANALYTICDB:
+                    dataset_id = dataset.id
+                    collection_name = Dataset.gen_collection_name_by_id(dataset_id)
+                    index_struct_dict = {
+                        "type": VectorType.ANALYTICDB,
                         "vector_store": {"class_prefix": collection_name}
                     }
                     dataset.index_struct = json.dumps(index_struct_dict)
@@ -474,8 +483,7 @@ def convert_to_agent_apps():
 @click.option('--field', default='metadata.doc_id', prompt=False, help='index field , default is metadata.doc_id.')
 def add_qdrant_doc_id_index(field: str):
     click.echo(click.style('Start add qdrant doc_id index.', fg='green'))
-    config = current_app.config
-    vector_type = config.get('VECTOR_STORE')
+    vector_type = dify_config.VECTOR_STORE
     if vector_type != "qdrant":
         click.echo(click.style('Sorry, only support qdrant vector store.', fg='red'))
         return
@@ -492,13 +500,15 @@ def add_qdrant_doc_id_index(field: str):
 
         from core.rag.datasource.vdb.qdrant.qdrant_vector import QdrantConfig
         for binding in bindings:
+            if dify_config.QDRANT_URL is None:
+                raise ValueError('Qdrant url is required.')
             qdrant_config = QdrantConfig(
-                endpoint=config.get('QDRANT_URL'),
-                api_key=config.get('QDRANT_API_KEY'),
+                endpoint=dify_config.QDRANT_URL,
+                api_key=dify_config.QDRANT_API_KEY,
                 root_path=current_app.root_path,
-                timeout=config.get('QDRANT_CLIENT_TIMEOUT'),
-                grpc_port=config.get('QDRANT_GRPC_PORT'),
-                prefer_grpc=config.get('QDRANT_GRPC_ENABLED')
+                timeout=dify_config.QDRANT_CLIENT_TIMEOUT,
+                grpc_port=dify_config.QDRANT_GRPC_PORT,
+                prefer_grpc=dify_config.QDRANT_GRPC_ENABLED
             )
             try:
                 client = qdrant_client.QdrantClient(**qdrant_config.to_qdrant_params())
@@ -585,6 +595,53 @@ def upgrade_db():
         click.echo('Database migration skipped')
 
 
+@click.command('fix-app-site-missing', help='Fix app related site missing issue.')
+def fix_app_site_missing():
+    """
+    Fix app related site missing issue.
+    """
+    click.echo(click.style('Start fix app related site missing issue.', fg='green'))
+
+    failed_app_ids = []
+    while True:
+        sql = """select apps.id as id from apps left join sites on sites.app_id=apps.id
+where sites.id is null limit 1000"""
+        with db.engine.begin() as conn:
+            rs = conn.execute(db.text(sql))
+
+            processed_count = 0
+            for i in rs:
+                processed_count += 1
+                app_id = str(i.id)
+
+                if app_id in failed_app_ids:
+                    continue
+
+                try:
+                    app = db.session.query(App).filter(App.id == app_id).first()
+                    tenant = app.tenant
+                    if tenant:
+                        accounts = tenant.get_accounts()
+                        if not accounts:
+                            print("Fix app {} failed.".format(app.id))
+                            continue
+
+                        account = accounts[0]
+                        print("Fix app {} related site missing issue.".format(app.id))
+                        app_was_created.send(app, account=account)
+                except Exception as e:
+                    failed_app_ids.append(app_id)
+                    click.echo(click.style('Fix app {} related site missing issue failed!'.format(app_id), fg='red'))
+                    logging.exception(f'Fix app related site missing issue failed, error: {e}')
+                    continue
+
+            if not processed_count:
+                break
+
+
+    click.echo(click.style('Congratulations! Fix app related site missing issue successful!', fg='green'))
+
+
 def register_commands(app):
     app.cli.add_command(reset_password)
     app.cli.add_command(reset_email)
@@ -594,3 +651,4 @@ def register_commands(app):
     app.cli.add_command(add_qdrant_doc_id_index)
     app.cli.add_command(create_tenant)
     app.cli.add_command(upgrade_db)
+    app.cli.add_command(fix_app_site_missing)

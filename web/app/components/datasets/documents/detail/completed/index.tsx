@@ -5,7 +5,6 @@ import { HashtagIcon } from '@heroicons/react/24/solid'
 import { useTranslation } from 'react-i18next'
 import { useContext } from 'use-context-selector'
 import { debounce, isNil, omitBy } from 'lodash-es'
-import cn from 'classnames'
 import {
   RiCloseLine,
   RiEditLine,
@@ -15,6 +14,7 @@ import { DocumentContext } from '../index'
 import { ProcessStatus } from '../segment-add'
 import s from './style.module.css'
 import InfiniteVirtualList from './InfiniteVirtualList'
+import cn from '@/utils/classnames'
 import { formatNumber } from '@/utils/format'
 import Modal from '@/app/components/base/modal'
 import Switch from '@/app/components/base/switch'
@@ -137,13 +137,12 @@ const SegmentDetailComponent: FC<ISegmentDetailProps> = ({
         {isEditing && (
           <>
             <Button
-              className='mr-2 !h-7 !px-3 !py-[5px] text-xs font-medium text-gray-700 !rounded-md'
               onClick={handleCancel}>
               {t('common.operation.cancel')}
             </Button>
             <Button
               variant='primary'
-              className='!h-7 !px-3 !py-[5px] text-xs font-medium !rounded-md'
+              className='ml-3'
               onClick={handleSave}
               disabled={loading}
             >

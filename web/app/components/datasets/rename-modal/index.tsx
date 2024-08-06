@@ -1,12 +1,12 @@
 'use client'
 
 import type { MouseEventHandler } from 'react'
-import cn from 'classnames'
 import { useState } from 'react'
 import { RiCloseLine } from '@remixicon/react'
 import { BookOpenIcon } from '@heroicons/react/24/outline'
 import { useContext } from 'use-context-selector'
 import { useTranslation } from 'react-i18next'
+import cn from '@/utils/classnames'
 import Button from '@/app/components/base/button'
 import Modal from '@/app/components/base/modal'
 import { ToastContext } from '@/app/components/base/toast'
@@ -95,8 +95,8 @@ const RenameDatasetModal = ({ show, dataset, onSuccess, onClose }: RenameDataset
         </div>
       </div>
       <div className='pt-6 flex justify-end'>
-        <Button className='mr-2 text-gray-700 text-sm font-medium' onClick={onClose}>{t('common.operation.cancel')}</Button>
-        <Button className='text-sm font-medium' disabled={loading} variant="primary" onClick={onConfirm}>{t('common.operation.save')}</Button>
+        <Button className='mr-2' onClick={onClose}>{t('common.operation.cancel')}</Button>
+        <Button disabled={loading} variant="primary" onClick={onConfirm}>{t('common.operation.save')}</Button>
       </div>
     </Modal>
   )

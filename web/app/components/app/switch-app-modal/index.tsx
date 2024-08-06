@@ -4,9 +4,9 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useContext } from 'use-context-selector'
 import { useTranslation } from 'react-i18next'
-import cn from 'classnames'
 import { RiCloseLine } from '@remixicon/react'
 import s from './style.module.css'
+import cn from '@/utils/classnames'
 import Button from '@/app/components/base/button'
 import Modal from '@/app/components/base/modal'
 import Confirm from '@/app/components/base/confirm'
@@ -132,8 +132,8 @@ const SwitchAppModal = ({ show, appDetail, inAppDetail = false, onSuccess, onClo
             <label htmlFor="removeOriginal" className="ml-2 text-sm leading-5 text-gray-700 cursor-pointer">{t('app.removeOriginal')}</label>
           </div>
           <div className='flex items-center'>
-            <Button className='mr-2 text-gray-700 text-sm font-medium' onClick={onClose}>{t('app.newApp.Cancel')}</Button>
-            <Button className='text-sm font-medium border-red-700 border-[0.5px]' disabled={isAppsFull || !name} variant="warning" onClick={goStart}>{t('app.switchStart')}</Button>
+            <Button className='mr-2' onClick={onClose}>{t('app.newApp.Cancel')}</Button>
+            <Button className='border-red-700' disabled={isAppsFull || !name} variant="warning" onClick={goStart}>{t('app.switchStart')}</Button>
           </div>
         </div>
       </Modal>
@@ -144,10 +144,6 @@ const SwitchAppModal = ({ show, appDetail, inAppDetail = false, onSuccess, onClo
           isShow={showConfirmDelete}
           onConfirm={() => setShowConfirmDelete(false)}
           onCancel={() => {
-            setShowConfirmDelete(false)
-            setRemoveOriginal(false)
-          }}
-          onClose={() => {
             setShowConfirmDelete(false)
             setRemoveOriginal(false)
           }}
