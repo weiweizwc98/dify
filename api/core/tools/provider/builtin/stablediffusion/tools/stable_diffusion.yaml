@@ -102,3 +102,43 @@ parameters:
       pt_BR: Negative prompt
     form: form
     default: bad art, ugly, deformed, watermark, duplicated, discontinuous lines
+  - name: seed
+    type: number
+    required: false
+    label:
+      en_US: Seed
+      zh_Hans: 种子
+      pt_BR: Semente
+    human_description:
+      en_US: Seed for random number generator. Use -1 for a random seed.
+      zh_Hans: 随机数生成器的种子。使用 -1 表示随机种子。
+      pt_BR: Semente para o gerador de números aleatórios. Use -1 para uma semente aleatória.
+    form: form
+    default: -1
+  - name: cfg_scale
+    type: number
+    required: false
+    label:
+      en_US: CFG Scale
+      zh_Hans: CFG 缩放
+      pt_BR: Escala CFG
+    human_description:
+      en_US: Classifier Free Guidance Scale
+      zh_Hans: 无分类器指导缩放
+      pt_BR: Escala de Orientação Livre de Classificador
+    form: form
+    default: 7
+  - name: sampler_name
+    type: string
+    required: false
+    label:
+      en_US: Sampler
+      zh_Hans: 采样器
+      pt_BR: Amostrador
+    human_description:
+      en_US: Sampling method to use
+      zh_Hans: 使用的采样方法
+      pt_BR: Método de amostragem a ser usado
+    form: form
+    default: "DPM++ 2M"
+
