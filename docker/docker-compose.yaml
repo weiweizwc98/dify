@@ -182,7 +182,10 @@ x-shared-env: &shared-api-worker-env
 services:
   # API service
   api:
-    image: langgenius/dify-api:0.6.16
+    build:
+      context: H:\PycharmProjects\dify\api  # API 代码所在目录的路径
+      dockerfile: Dockerfile  # Dockerfile 的名称,如果是默认的 Dockerfile 可以省略
+#    image: langgenius/dify-api:0.6.16
     restart: always
     environment:
       # Use the shared environment variables.
@@ -202,7 +205,10 @@ services:
   # worker service
   # The Celery worker for processing the queue.
   worker:
-    image: langgenius/dify-api:0.6.16
+    build:
+      context: H:\PycharmProjects\dify\api  # API 代码所在目录的路径
+      dockerfile: Dockerfile  # Dockerfile 的名称,如果是默认的 Dockerfile 可以省略
+#    image: langgenius/dify-api:0.6.16
     restart: always
     environment:
       # Use the shared environment variables.
