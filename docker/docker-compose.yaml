@@ -177,20 +177,22 @@ x-shared-env: &shared-api-worker-env
   CODE_EXECUTION_API_KEY: ${SANDBOX_API_KEY:-dify-sandbox}
   CODE_MAX_NUMBER: ${CODE_MAX_NUMBER:-9223372036854775807}
   CODE_MIN_NUMBER: ${CODE_MIN_NUMBER:--9223372036854775808}
-  CODE_MAX_DEPTH: ${CODE_MAX_DEPTH:-5}
-  CODE_MAX_PRECISION: ${CODE_MAX_PRECISION:-20}
-  CODE_MAX_STRING_LENGTH: ${CODE_MAX_STRING_LENGTH:-80000}
-  TEMPLATE_TRANSFORM_MAX_LENGTH: ${TEMPLATE_TRANSFORM_MAX_LENGTH:-80000}
-  CODE_MAX_STRING_ARRAY_LENGTH: ${CODE_MAX_STRING_ARRAY_LENGTH:-30}
-  CODE_MAX_OBJECT_ARRAY_LENGTH: ${CODE_MAX_OBJECT_ARRAY_LENGTH:-30}
-  CODE_MAX_NUMBER_ARRAY_LENGTH: ${CODE_MAX_NUMBER_ARRAY_LENGTH:-1000}
+  CODE_MAX_DEPTH: ${CODE_MAX_DEPTH:-500}
+  CODE_MAX_PRECISION: ${CODE_MAX_PRECISION:-2000}
+  CODE_MAX_STRING_LENGTH: ${CODE_MAX_STRING_LENGTH:-800000}
+  TEMPLATE_TRANSFORM_MAX_LENGTH: ${TEMPLATE_TRANSFORM_MAX_LENGTH:-800000}
+  CODE_MAX_STRING_ARRAY_LENGTH: ${CODE_MAX_STRING_ARRAY_LENGTH:-3000000}
+  CODE_MAX_OBJECT_ARRAY_LENGTH: ${CODE_MAX_OBJECT_ARRAY_LENGTH:-3000000}
+  CODE_MAX_NUMBER_ARRAY_LENGTH: ${CODE_MAX_NUMBER_ARRAY_LENGTH:-1000000}
   SSRF_PROXY_HTTP_URL: ${SSRF_PROXY_HTTP_URL:-http://ssrf_proxy:3128}
   SSRF_PROXY_HTTPS_URL: ${SSRF_PROXY_HTTPS_URL:-http://ssrf_proxy:3128}
 
 services:
   # API service
   api:
-    image: langgenius/dify-api:0.7.2
+    build:
+      context: H:\PycharmProjects\dify\api  # API 代码所在目录的路径
+      dockerfile: Dockerfile  # Dockerfile 的名称,如果是默认的 Dockerfile 可以省略
     restart: always
     environment:
       # Use the shared environment variables.
@@ -210,7 +212,9 @@ services:
   # worker service
   # The Celery worker for processing the queue.
   worker:
-    image: langgenius/dify-api:0.7.2
+    build:
+      context: H:\PycharmProjects\dify\api  # API 代码所在目录的路径
+      dockerfile: Dockerfile  # Dockerfile 的名称,如果是默认的 Dockerfile 可以省略
     restart: always
     environment:
       # Use the shared environment variables.
@@ -259,6 +263,8 @@ services:
       interval: 1s
       timeout: 3s
       retries: 30
+    ports:
+      - "5432:5432"
 
   # The redis cache.
   redis:
@@ -331,7 +337,7 @@ services:
       - CERTBOT_DOMAIN=${CERTBOT_DOMAIN}
       - CERTBOT_OPTIONS=${CERTBOT_OPTIONS:-}
     entrypoint: [ "/docker-entrypoint.sh" ]
-    command: ["tail", "-f", "/dev/null"]
+    command: [ "tail", "-f", "/dev/null" ]
 
   # The nginx reverse proxy.
   # used for reverse proxying the API service and Web service.
@@ -620,7 +626,7 @@ services:
     ports:
       - ${ELASTICSEARCH_PORT:-9200}:9200
     healthcheck:
-      test: ["CMD", "curl", "-s", "http://localhost:9200/_cluster/health?pretty"]
+      test: [ "CMD", "curl", "-s", "http://localhost:9200/_cluster/health?pretty" ]
       interval: 30s
       timeout: 10s
       retries: 50
